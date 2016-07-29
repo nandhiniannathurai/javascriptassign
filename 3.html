@@ -1,0 +1,125 @@
+<html lang="en">
+<head>
+   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/d3-legend/1.1.0/d3-legend.js"></script>
+</head>
+<body>
+   <div>
+         <svg id="graph" width="900" height="600"></svg>
+   </div>
+   <script>
+       d3.json("3.json", function(data)
+       {
+       var vis = d3.select("#graph"),
+           WIDTH = 1100,
+           HEIGHT = 500,
+           MARGINS = {
+               top: 20,
+               right: 20,
+               bottom: 20,
+               left: 80
+           },
+           xScale = d3.scale.ordinal().rangePoints([70, 850], .05),
+           yScale = d3.scale.linear().range([HEIGHT - MARGINS.top,MARGINS.bottom]).domain([0,45]),
+           xAxis = d3.svg.axis()
+           .scale(xScale),
+           yAxis = d3.svg.axis()
+           .scale(yScale);
+           xScale.domain(data.map(function(d) { return d.country; }));
+           vis.append("text")
+                   .attr("x", 500 )
+                   .attr("y", 530 )
+                   .style("text-anchor", "middle")
+                   .style("font-size",25)
+                   .style("font-weight","bold")
+                   .text("countries");
+           vis.append("g")
+           .attr("class","axis")
+           .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+           .style("font-weight","bold")
+           .call(xAxis);
+           yAxis = d3.svg.axis()
+           .scale(yScale)
+           .orient("left");
+           vis.append("text")
+                   .attr("x", -250 )
+                   .attr("y", 30 )
+                   .style("text-anchor", "middle")
+                   .attr("transform", "rotate(-90)")
+                   .style("font-size",18)
+                   .style("font-weight","bold")
+                   .text("Value(g)");
+           vis.append("g")
+           .attr("class","axis")
+           .attr("transform", "translate(" + (MARGINS.left) + ",0)")
+           .style("font-weight","bold")
+           .call(yAxis);
+           var canvas=d3.select("body").append("svg")
+           .attr("width", 500)
+           .attr("height", 500);
+           var lineGen = d3.svg.line()
+           .x(function(d)
+           {
+             return xScale(d.country);
+           })
+           .y(function(d)
+           {
+             return yScale(d.fat_consumption);
+           })
+           var lineGen1 = d3.svg.line()
+           .x(function(d)
+           {
+             return xScale(d.country);
+           })
+           .y(function(d)
+           {
+             return yScale(d.carbohydrates_consumption);
+           })
+           var lineGen2 = d3.svg.line()
+           .x(function(d)
+           {
+             return xScale(d.country);
+           })
+           .y(function(d)
+           {
+             return yScale(d.proteins_consumption);
+           });
+           vis.append('path')
+           .attr('d', lineGen(data))
+           .attr('stroke', 'green')
+           .attr('stroke-width', 2)
+           .attr('fill', 'none');
+           vis.append('path')
+           .attr('d', lineGen1(data))
+           .attr('stroke', 'blue')
+           .attr('stroke-width', 2)
+           .attr('fill', 'none');
+           vis.append('path')
+           .attr('d', lineGen2(data))
+           .attr('stroke', 'red')
+           .attr('stroke-width', 2)
+           .attr('fill', 'none');
+
+
+           var linear = d3.scale.ordinal()
+   .domain(["Fat","Carbohydrate","protein"])
+   .range(["blue","green","red"]);
+
+    var svg = d3.select("svg");
+
+  svg.append("g")
+      .attr("class", "legendLinear")
+     .attr("transform", "translate(500,50)");
+
+  var legendLinear = d3.legend.color()
+   .shapeWidth(30)
+   .orient('vertical')
+    .scale(linear);
+
+  svg.select(".legendLinear")
+   .call(legendLinear);
+
+         });
+   </script>
+</body>
+</html
